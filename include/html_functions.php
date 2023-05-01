@@ -73,7 +73,7 @@
             <th>URL Key</th>
         </tr>
         <?php
-        $result = $conn->query("SELECT parties.id, nickname, COUNT(guests.id) AS total, SUM(guests.response) AS attending, url_keys.value AS url_key, rsvp_comment FROM parties"
+        $result = $conn->query("SELECT parties.id, nickname, COUNT(guests.id) AS total, SUM(guests.response) AS attending, ANY_VALUE(url_keys.value) AS url_key, rsvp_comment FROM parties"
                                 . " INNER JOIN guests ON parties.id = guests.party_id"
                                 . " LEFT OUTER JOIN url_keys ON parties.id = url_keys.party_id"
                                 . " GROUP BY parties.id");
@@ -257,7 +257,7 @@
     ?>
     <table id="rsvp_urls_table" border=1>
     <?php
-        $result = $conn->query("SELECT GROUP_CONCAT(COALESCE(guests.name, '+1') ORDER BY guests.name SEPARATOR '; ') AS guests, GROUP_CONCAT(DISTINCT party_emails.email ORDER BY party_emails.email SEPARATOR '; ') AS emails, url_keys.value AS url_key"
+        $result = $conn->query("SELECT GROUP_CONCAT(COALESCE(guests.name, '+1') ORDER BY guests.name SEPARATOR '; ') AS guests, GROUP_CONCAT(DISTINCT party_emails.email ORDER BY party_emails.email SEPARATOR '; ') AS emails, ANY_VALUE(url_keys.value) AS url_key"
                                 . " FROM parties INNER JOIN guests ON guests.party_id = parties.id"
                                 . " LEFT OUTER JOIN party_emails ON party_emails.party_id = parties.id"
                                 . " INNER JOIN url_keys ON url_keys.party_id = parties.id"
